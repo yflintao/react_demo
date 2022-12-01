@@ -1,0 +1,71 @@
+.link{
+    &{color:#095eab;cursor: pointer;}
+    &:hover{color:#C00;}
+}
+
+.red{color:#ed4014 !important;}
+.blue{ color:#2d8cf0!important;}
+.grey{ color: #999!important;}
+.green{color: #19be6b!important;}
+.c-orange{ color:#F90!important;}
+.c-666{ color: #666!important;}
+.textarea{margin:5px 5px 5px 0;padding:5px;}
+
+.size_12 {font-size: 12px;}
+.size_13 {font-size: 13px;}
+.size_14 {font-size: 14px;}
+.size_15 {font-size: 15px;}
+.size_16 {font-size: 16px;}
+.size_18 {font-size: 18px;}
+.size_20 {font-size: 20px;}
+.size_22 {font-size: 22px;}
+.size_24 {font-size: 24px;}
+
+.p-10 {padding:10px!important;}
+.p-15 {padding:15px !important;}
+.p-10 {padding:10px 0;}
+.p-15 {padding:15px 0;}
+.p-25 {padding:25px 15px 15px !important;}
+
+.m-r-6 {margin-right:6px;}
+.m-b-12 {margin-bottom:12px !important;}
+.m-b-6 {margin-bottom:6px !important;}
+.m-b-18 {margin-bottom:18px;}
+.m-b-24 {margin-bottom:24px;}
+.m-b-16 {margin-bottom:16px !important;}
+.m-b-10 {margin-bottom:10px !important;}
+.m-t-6 {margin-top:6px;}
+.m-t-4 { margin-top:4px;}
+.m-t-12 {margin-top:12px;}
+.m-t-10 {margin-top:10px;}
+.m-t-8 {margin-top:8px;}
+.m-t-16 {margin-top:16px!important;}
+.m-t-24 {margin-top:24px;}
+.m-t-20 {margin-top:20px;}
+.m-t-30 {margin-top:30px;}
+.m-t-40 {margin-top:40px;}
+.m-l-12 {margin-left:12px;}
+.m-l-15 {margin-left:15px;}
+.m-l-50 {margin-left:50px;}
+.m-l-30 {margin-left:30px;}
+.m-r-50 {margin-right:50px;}
+.m-r-12 {margin-right:12px !important;}
+.m-r-8 {margin-right:8px !important;}
+.m-r-24{ margin-right: 24px;}
+.m-r-10 {margin-right:10px !important;}
+.m-l-20{padding-left:20px !important;}
+
+.p-l-0 {padding-left:0 !important;}
+.p-t-10 {padding-top:10px !important;}
+.m-b-15 {margin-bottom: 16px;}
+
+.font_b{font-weight: bold;}
+.line_height{line-height: 1;}
+.relative{position: relative;}
+
+.flexEnd{justify-content:flex-end;display:flex;flex-wrap: wrap;}
+.gFlexStart{display: flex;justify-content: flex-start;flex-wrap: wrap;}
+.flexCenter{display:flex;justify-content:center;flex-wrap: wrap;}
+.flexStart{display: flex;justify-content: flex-start;flex-wrap: wrap;}
+.flexBetween{display: flex;justify-content:space-between;flex-wrap: wrap;}
+.flexColumn{display: flex;flex-direction: column;}
