@@ -50,8 +50,8 @@ const Login = () => {
                     validateTrigger={['onBlur', 'onChange']}
                     initialValues={{
                         validateCode: '',
-                        user_name: 'yflintao',
-                        user_password: 'yf15398806',
+                        user_name: '',
+                        user_password: '',
                         remember: true
                     }}
                     onFinish={onFinish}
