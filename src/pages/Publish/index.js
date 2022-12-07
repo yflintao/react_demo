@@ -12,19 +12,33 @@ import {
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { observer } from 'mobx-react-lite'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useStore } from '@/store'
 import { useEffect, useRef, useState } from 'react'
 import { http } from '@/utils'
+import {connect} from "_react-redux@8.0.5@react-redux";
+import {get_channel_async} from "@/redux/actions";
 const { Option } = Select
-const Publish = () => {
-  const { channelStore } = useStore()
+const Publish = (props) => {
+  const [Channel,setChannel] = useState([]);
+
+  useEffect(()=>{
+    props.get_channel_async();
+    setChannel(props.channelReducer.channel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
+
+
+  // 存放上传图片的列表
   const [fileList, setFileList] = useState([])
+  // 这个函数的执行分阶段 是从updating到done的过程
+  // 这个过程只要上传图片内容发生变化就会不断执行直到全部上传完毕
+  // 使用useRef声明一个暂存仓库
   const cacheImgList = useRef([])
   const onUploadChange = ({ fileList }) => {
+    // 同时把图片列表存入仓库一份
+    // 这里关键位置:需要做数据格式化
     const formatList = fileList.map(file => {
       // 上传完毕 做数据处理
       if (file.response) {
@@ -62,7 +76,9 @@ const Publish = () => {
   // 提交表单
   const navigate = useNavigate()
   const onFinish = async (values) => {
+    // 数据的二次处理 重点是处理cover字段
     const { channel_id, content, title, type } = values
+    // 判断type fileList 是匹配的才能正常提交
     const params = {
       channel_id,
       content,
@@ -84,8 +100,11 @@ const Publish = () => {
     message.success(`${id ? '更新成功' : '发布成功'}`)
   }
 
+  // 编辑功能
+  // 文案适配  路由参数id 判断条件
   const [params] = useSearchParams()
   const id = params.get('id')
+  // 数据回填  id调用接口  1.表单回填 2.暂存列表 3.Upload组件fileList
   const [form] = Form.useForm()
   useEffect(() => {
     const loadDetail = async () => {
@@ -139,10 +158,11 @@ const Publish = () => {
             rules={[{ required: true, message: '请选择文章频道' }]}
           >
             <Select placeholder="请选择文章频道" style={{ width: 400 }}>
-              {channelStore.channelList.map(item => (
-                <Option key={item.id} value={item.id}>{item.name}</Option>
-              ))}
-
+              {
+                Channel.map(item =>
+                    <Option key={item.id} value={item.id}>{item.category_name}</Option>
+                )
+              }
             </Select>
           </Form.Item>
 
@@ -196,4 +216,8 @@ const Publish = () => {
   )
 }
 
-export default observer(Publish)
+export default connect(
+    state =>({
+      channelReducer:state.channelReducer
+    }),{get_channel_async}
+)(Publish)

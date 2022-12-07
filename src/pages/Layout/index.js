@@ -1,6 +1,11 @@
 import {Layout, Menu, Popconfirm} from 'antd'
+import './index.scss'
+import NProgress from 'nprogress'
 import {Outlet, useLocation, useNavigate} from 'react-router-dom'
-import {observer} from 'mobx-react-lite'
+import { connect } from 'react-redux'
+import {get_user_async} from '@/redux/actions';
+import { Spin } from 'antd'
+
 import {
     HomeOutlined,
     DiffOutlined,
@@ -9,27 +14,34 @@ import {
     LogoutOutlined
 } from '@ant-design/icons'
 import './index.scss'
-import {useStore} from '@/store'
-import {useEffect} from 'react'
+import 'nprogress/nprogress.css'
+import {loginOut} from '@/components/Login'
+import {useEffect, useState} from 'react'
 
-const {Header, Sider} = Layout
+const {Header, Sider} = Layout;
 
-const GeekLayout = () => {
+const GeekLayout = (props) => {
     const {pathname} = useLocation();
-    const {userStore, loginStore, channelStore} = useStore()
+    const [user,setuser] = useState({});
 
+    NProgress.start()
     useEffect(() => {
-        userStore.getUserInfo()
-        channelStore.loadChannelList()
-    }, [userStore, channelStore])
+        NProgress.done()
+    })
 
     // 确定退出
     const navigate = useNavigate()
     const onConfirm = () => {
         // 退出登录 删除token 跳回到登录
-        loginStore.loginOut()
+        loginOut()
         navigate('/login')
     }
+
+    useEffect(()=>{
+        props.get_user_async();
+        setuser(props.userReducer.useinfo);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[])
 
     const getItem = (label, key, icon, children, type) => {
         return {
@@ -59,14 +71,14 @@ const GeekLayout = () => {
             <Header className="header">
                 <div className="logo"/>
                 <div className="user-info">
-                    <span className="user-name">{userStore.userInfo.person_name || '--'}</span>
+                    <span className="user-name">{user.user_name || '--'}</span>
                     <span className="user-logout">
-            <Popconfirm
-                onConfirm={onConfirm}
-                title="是否确认退出？" okText="退出" cancelText="取消">
-              <LogoutOutlined/> 退出
-            </Popconfirm>
-          </span>
+                        <Popconfirm
+                            onConfirm={onConfirm}
+                            title="是否确认退出？" okText="退出" cancelText="取消">
+                          <LogoutOutlined/> 退出
+                        </Popconfirm>
+                    </span>
                 </div>
             </Header>
             <Layout>
@@ -88,12 +100,18 @@ const GeekLayout = () => {
                     />
                 </Sider>
                 <Layout className="layout-content" style={{padding: 20}}>
-                    {/* 二级路由出口 */}
-                    <Outlet/>
+                    <Spin size="large" spinning={props.switch}>
+                        {/* 二级路由出口 */}
+                        <Outlet/>
+                    </Spin>
                 </Layout>
             </Layout>
         </Layout>
     )
 }
-
-export default observer(GeekLayout)
+export default connect(
+    state =>({
+        switch:state.loadingReducer,
+        userReducer:state.userReducer
+    }),{get_user_async}
+)(GeekLayout)

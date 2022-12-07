@@ -1,5 +1,4 @@
 import './index.scss'
-import {observer} from 'mobx-react-lite'
 import {Table, Tag, Card, Input} from 'antd'
 import {useEffect, useState} from 'react'
 import {http,filterData} from '@/utils'
@@ -21,17 +20,15 @@ const News = () => {
     })
     // 获取文章列表
     useEffect(() => {
-        const loadList = async () => {
+        (async () => {
             const filterParams = filterData(params);
-            console.log('filterParams:',filterParams);
             const recode = await http.get('/article/search', {params:filterParams});
             const {count, rows} = recode.data
             setNewsData({
                 list: rows,
                 count
             })
-        }
-        loadList()
+        })()
     }, [params])
 
     const onSearch = (keywords) => {
@@ -121,4 +118,4 @@ const News = () => {
     )
 }
 
-export default observer(News)
+export default News

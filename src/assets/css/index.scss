@@ -1,3 +1,5 @@
+#root,.App,.ant-layout{height: 100vh;}
+.wh100{width: 100vw;height: 100vh;}
 .link{
     &{color:#095eab;cursor: pointer;}
     &:hover{color:#C00;}
@@ -69,3 +71,4 @@
 .flexStart{display: flex;justify-content: flex-start;flex-wrap: wrap;}
 .flexBetween{display: flex;justify-content:space-between;flex-wrap: wrap;}
 .flexColumn{display: flex;flex-direction: column;}
+.flexColumnCenter{display: flex;justify-content: center;align-items: center;}

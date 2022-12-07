@@ -1,3 +1,5 @@
+// 封装ls存取token
+
 const key = 'Token'
 
 const setToken = (token) => {

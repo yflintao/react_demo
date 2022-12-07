@@ -3,19 +3,18 @@ import logo from '@/assets/images/logo.png'
 import { useNavigate } from 'react-router-dom'
 // 导入样式文件
 import './index.scss'
-import { useStore } from '@/store'
+import { loginIn} from '@/components/Login'
 import { http } from '@/utils'
 import { useEffect, useState } from 'react'
 
 const Login = () => {
-    const { loginStore } = useStore()
     const navigate = useNavigate()
     const onFinish = async (values) => {
         console.log(values)
         // values：放置的是所有表单项中用户输入的内容
         // todo:登录
         const { user_name, user_password,validateCode } = values
-        await loginStore.getToken({  user_name, user_password, validateCode })
+        await loginIn({  user_name, user_password, validateCode })
         // 跳转首页
         navigate('/', { replace: true })
         // 提示用户
@@ -50,8 +49,8 @@ const Login = () => {
                     validateTrigger={['onBlur', 'onChange']}
                     initialValues={{
                         validateCode: '',
-                        user_name: '',
-                        user_password: '',
+                        user_name: 'admin',
+                        user_password: 'admin888',
                         remember: true
                     }}
                     onFinish={onFinish}

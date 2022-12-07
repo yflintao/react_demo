@@ -1,20 +1,29 @@
-import './index.scss'
 import {Link, useNavigate} from 'react-router-dom'
-import {observer} from 'mobx-react-lite'
-import {Table, Tag, Space, Card, Breadcrumb, Form, Button, Radio, DatePicker, Select} from 'antd'
+import {Table, Tag, Space, Card, Breadcrumb, Form, Button, Radio, DatePicker, Select, Input} from 'antd'
 import 'moment/locale/zh-cn'
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import {EditOutlined, DeleteOutlined} from '@ant-design/icons'
 import {useEffect, useState} from 'react'
 import {http} from '@/utils'
-import {useStore} from '@/store'
+import { connect } from 'react-redux'
+import {get_channel_async} from "@/redux/actions";
 
 const {Option} = Select
 const {RangePicker} = DatePicker
 
 
-const Article = () => {
-    const {channelStore} = useStore()
+const Article = (props) => {
+    const [Channel,setChannel] = useState([]);
+
+    useEffect(()=>{
+        props.get_channel_async();
+        setChannel(props.channelReducer.channel);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[])
+
+    const [RadioList] = useState([
+        {key:'null',name:'全部'},{key:'0',name:'草稿'},{key:'1',name:'待审核'},{key:'2',name:'审核通过'},{key:'3',name:'审核失败'}
+    ])
 
     // 文章列表管理 统一管理数据 将来修改给setArticleData传对象
     const [articleData, setArticleData] = useState({
@@ -29,30 +38,22 @@ const Article = () => {
         keywords:''
     })
     // 获取文章列表
-    useEffect(() => {
-        const loadList = async () => {
+    useEffect( () => {
+        (async () => {
             const recode = await http.get('/article/search', {params});
-            const {count, rows} = recode.data
+            const {count, rows} = recode.data;
             setArticleData({
                 list: rows,
                 count
             })
-        }
-        loadList()
+        })()
     }, [params])
 
     /* 表单筛选功能实现 */
     const onFinish = (values) => {
-        const {channel_id, date, status} = values
+        const { date,...itemData} = values;
         // 数据处理
         const _params = {}
-        // 格式化status
-        _params.status = status
-
-        // 初始化频道
-        if (channel_id) {
-            _params.channel_id = channel_id
-        }
         // 初始化时间
         if (date) {
             _params.begin_pubdate = date[0].format('YYYY-MM-DD')
@@ -61,6 +62,7 @@ const Article = () => {
         // 修改params数据 引起接口的重新发送 对象的合并是一个整体覆盖 改了对象的整体引用
         setParams({
             ...params,
+            ...itemData,
             ..._params
         })
     }
@@ -82,7 +84,7 @@ const Article = () => {
 
     // 删除文章
     const delArticle = async (data) => {
-        await http.get(`/mp/articles/${data.id}`)
+        await http.delete(`/mp/articles/${data.id}`)
         // 刷新一下列表
         setParams({
             ...params,
@@ -157,23 +159,24 @@ const Article = () => {
                 }
                 style={{marginBottom: 20}}
             >
-                <Form
-                    onFinish={onFinish}
-                    initialValues={{status: null}}>
+                <Form onFinish={onFinish}>
+                    <Form.Item label="关键字" name="keywords" style={{width: '310px'}}>
+                        <Input placeholder="请输入关键字" />
+                    </Form.Item>
                     <Form.Item label="状态" name="status">
                         <Radio.Group>
-                            <Radio value={null}>全部</Radio>
-                            <Radio value={0}>草稿</Radio>
-                            <Radio value={1}>待审核</Radio>
-                            <Radio value={2}>审核通过</Radio>
-                            <Radio value={3}>审核失败</Radio>
+                            {
+                                RadioList.map(item =>
+                                    <Radio value={item.key} key={item.key}>{item.name}</Radio>
+                                )
+                            }
                         </Radio.Group>
                     </Form.Item>
 
                     <Form.Item label="频道" name="channel_id">
-                        <Select placeholder="请选择文章频道" style={{width: 265}}>
+                        <Select placeholder="请选择文章频道" style={{width: '265px'}}>
                             {
-                                channelStore.channelList.map(item =>
+                                Channel.map(item =>
                                     <Option key={item.id} value={item.id}>{item.category_name}</Option>
                                 )
                             }
@@ -213,4 +216,8 @@ const Article = () => {
     )
 }
 
-export default observer(Article)
+export default connect(
+    state =>({
+        channelReducer:state.channelReducer
+    }),{get_channel_async}
+)(Article)
